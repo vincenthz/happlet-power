@@ -59,7 +59,7 @@ readChargeFull n = read `fmap` readSysFile (powerSupplyProperty n "charge_full_d
 readChargeNow n = read `fmap` readSysFile (powerSupplyProperty n "charge_now")
 
 isOnline :: String -> IO Bool
-isOnline n = catch (((== 1) . readInt) `fmap` readSysFile (powerSupplyProperty n "online")) (\(e :: SomeException) -> putStrLn (show e) >> return False)
+isOnline n = catch (((== 1) . readInt) `fmap` readSysFile (powerSupplyProperty n "online")) (\(_ :: SomeException) -> return False)
 	where
 		readInt :: String -> Int
 		readInt = read
@@ -112,7 +112,6 @@ main = do
 				return (bat, percent :: Double)
 				
 			z <- mapM r bats
-			putStrLn $ show z
 			let allBats = sum $ map snd z
 			onMain <- or `fmap` mapM isOnline mains
 
