@@ -108,14 +108,15 @@ main = do
 			let r bat = do
 				full <- readChargeFull bat
 				now  <- readChargeNow bat
+				st   <- readStatus bat
 				let percent = fromIntegral now / fromIntegral full
-				return (bat, percent :: Double)
+				return (bat, percent :: Double, st == "Charging")
 				
 			z <- mapM r bats
-			let allBats = sum $ map snd z
+			let allBats = sum $ map (\(_,x,_) -> x) z
 			onMain <- or `fmap` mapM isOnline mains
 
-			let tooltipBattery = concatMap (\(bat, p) -> printf "%s: %.0f%%\n" bat (p*100)) z
+			let tooltipBattery = concatMap (\(bat, p, c) -> printf "%s: %.0f%%%s\n" bat (p*100) (if c then " ↗" else " ↘")) z
 			let tooltip = concat
 				[ tooltipBattery
 				, printf "total: %.0f%%\n" (100*allBats)
