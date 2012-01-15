@@ -68,9 +68,9 @@ isOnline n = catch (((== 1) . readInt) `fmap` readSysFile (powerSupplyProperty n
 stockFromStatus OnMain = stockConnect
 stockFromStatus (OnBattery s) = batteryStock s where
 	batteryStock Normal    = stockYes
-	batteryStock Warning   = "gtk-warning"
+	batteryStock Warning   = "gtk-disconnect"
 	batteryStock Low       = stockNo
-	batteryStock Emergency = "gtk-error"
+	batteryStock Emergency = "gtk-dialog-question"
 
 statusBat n
 	| n <= thresholdEmergency  = Emergency
